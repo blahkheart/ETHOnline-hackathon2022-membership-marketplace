@@ -20,3 +20,7 @@
 .site-layout-background {
   background: #fff;
 }
+
+.mh-dashboard-content{ 
+  overflow-y: auto;
+}

@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { Breadcrumb, Layout, Menu } from "antd";
 import { utils } from "ethers";
-import { SyncOutlined, LaptopOutlined, NotificationOutlined, UserOutlined, ProfileOutlined } from "@ant-design/icons";
+import { SyncOutlined, LaptopOutlined, NotificationOutlined, UserOutlined } from "@ant-design/icons";
 import { Address, Balance, Events } from "../components";
+import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { Explore } from ".";
 
 export default function ExampleUI({
   address,
@@ -16,48 +18,41 @@ export default function ExampleUI({
   tx,
   readContracts,
   writeContracts,
+  // ...props
 }) {
-  // const [newPurpose, setNewPurpose] = useState("loading...");
-  const { Header, Footer, Sider, Content } = Layout;
+  const { Sider, Content } = Layout;
+  const history = useHistory();
 
-  // const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
+  // const links = [
+  //   {
+  //     icon: LaptopOutlined,
+  //     label: "Dashboard",
+  //     route: "/dashboard",
+  //   },
+  //   {
+  //     icon: UserOutlined,
+  //     label: "Profile",
+  //     route: "/dashboard/profile",
+  //   },
+  //   {
+  //     icon: SyncOutlined,
+  //     label: "Explore",
+  //     route: "/dashboard/explore",
+  //   },
+  //   {
+  //     icon: NotificationOutlined,
+  //     label: "Broadcast",
+  //     route: "/dashboard/create",
+  //   },
+  // ].map((link, index) => {
   //   const key = String(index + 1);
   //   return {
-  //     key: `sub${key}`,
-  //     icon: React.createElement(icon),
-  //     label: `subnav ${key}`,
+  //     key: key,
+  //     icon: React.createElement(link.icon),
+  //     label: link.label,
+  //     path: link.route,
   //   };
   // });
-
-  const links = [
-    {
-      icon: NotificationOutlined,
-      label: "Dashboard",
-      route: "/dashboard",
-    },
-    {
-      icon: UserOutlined,
-      label: "Profile",
-      route: "/profile",
-    },
-    {
-      icon: SyncOutlined,
-      label: "Explore",
-      route: "/explore",
-    },
-    {
-      icon: LaptopOutlined,
-      label: "Broadcast",
-      route: "/create",
-    },
-  ].map((link, index) => {
-    const key = String(index + 1);
-    return {
-      key: key,
-      icon: React.createElement(link.icon),
-      label: link.label,
-    };
-  });
 
   return (
     <Layout>
@@ -66,13 +61,33 @@ export default function ExampleUI({
         <Sider width={200} className="site-layout-background">
           <Menu
             mode="inline"
-            defaultSelectedKeys={["1"]}
+            // defaultSelectedKeys={["/dashboard"]}
             style={{
               height: "100%",
               borderRight: 0,
             }}
-            items={links}
-          />
+          >
+            <Menu.Item key="/dashboard">
+              <Link to="/dashboard">
+                <LaptopOutlined /> <span>Dashboard</span>{" "}
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/explore">
+              <Link to="/dashboard/explore">
+                <SyncOutlined /> <span>Explore</span>{" "}
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/create">
+              <Link to="/dashboard/create">
+                <NotificationOutlined /> <span>Broadcast</span>{" "}
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/profile">
+              <Link to="/dashboard/profile">
+                <UserOutlined /> <span>Profile</span>{" "}
+              </Link>
+            </Menu.Item>
+          </Menu>
         </Sider>
         <Layout
           style={{
@@ -84,15 +99,6 @@ export default function ExampleUI({
               <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} fontSize={18} />
             )}
           </div>
-          {/* <Breadcrumb
-            style={{
-              margin: '16px 0',
-            }}
-          >
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb> */}
           <Content
             className="site-layout-background"
             style={{
@@ -101,11 +107,20 @@ export default function ExampleUI({
               minHeight: 500,
             }}
           >
-            Content
+            <Switch>
+              <Route exact path="/dashboard">
+                DASHBOARD
+              </Route>
+              <Route path="/dashboard/profile">PROFILE</Route>
+              <Route path="/dashboard/explore">
+                <Explore />
+              </Route>
+              <Route path="/dashboard/create">CREATE</Route>
+            </Switch>
+            {/* {props.children} */}
           </Content>
         </Layout>
       </Layout>
-      {/* <Footer>Footer</Footer> */}
     </Layout>
   );
 }

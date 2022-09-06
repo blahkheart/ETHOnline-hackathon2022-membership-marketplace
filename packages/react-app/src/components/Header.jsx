@@ -36,7 +36,7 @@ export default function Header({ link, title, subTitle, ...props }) {
 }
 
 Header.defaultProps = {
-  link: "#",
+  link: "/#",
   title: "M | H",
   subTitle: "Discover communities",
 };
