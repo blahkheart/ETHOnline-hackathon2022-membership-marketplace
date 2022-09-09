@@ -1,12 +1,14 @@
 // import { Layout } from 'antd';
 // import { SyncOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
-import { Breadcrumb, Layout, Menu } from "antd";
-import { utils } from "ethers";
+import { Layout, Menu } from "antd";
+// import { utils } from "ethers";
 import { SyncOutlined, LaptopOutlined, NotificationOutlined, UserOutlined } from "@ant-design/icons";
-import { Address, Balance, Events } from "../components";
+import { Address, Balance, Events, SearchInput } from "../components";
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
-import { Explore } from ".";
+import { Explore, Create } from ".";
+// const count = 3;
+// const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
 
 export default function ExampleUI({
   address,
@@ -94,7 +96,10 @@ export default function ExampleUI({
             padding: "0 24px 24px",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "flex-end", padding: "20px 12px 20px 12px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "20px 12px 20px 12px" }}>
+            <div>
+              <SearchInput placeholder={"Search"} width={400} />
+            </div>
             {address && (
               <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} fontSize={18} />
             )}
@@ -115,7 +120,9 @@ export default function ExampleUI({
               <Route path="/dashboard/explore">
                 <Explore />
               </Route>
-              <Route path="/dashboard/create">CREATE</Route>
+              <Route path="/dashboard/create">
+                <Create />
+              </Route>
             </Switch>
             {/* {props.children} */}
           </Content>
