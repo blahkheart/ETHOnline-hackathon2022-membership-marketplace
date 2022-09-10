@@ -1,12 +1,15 @@
 // import { Layout } from 'antd';
 // import { SyncOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu } from "antd";
 // import { utils } from "ethers";
 import { SyncOutlined, LaptopOutlined, NotificationOutlined, UserOutlined } from "@ant-design/icons";
 import { Address, Balance, Events, SearchInput } from "../components";
 import { Link, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { Explore, Create } from ".";
+// import * as EpnsAPI from "@epnsproject/sdk-restapi";
+// import { NotificationItem, chainNameType } from "@epnsproject/sdk-uiweb";
+// import { EmbedSDK } from "@epnsproject/sdk-uiembed";
 // const count = 3;
 // const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
 
@@ -16,49 +19,21 @@ export default function ExampleUI({
   blockExplorer,
   localProvider,
   userSigner,
-  price,
-  tx,
+  localChainId,
   readContracts,
   writeContracts,
   // ...props
 }) {
   const { Sider, Content } = Layout;
   const history = useHistory();
-
-  // const links = [
-  //   {
-  //     icon: LaptopOutlined,
-  //     label: "Dashboard",
-  //     route: "/dashboard",
-  //   },
-  //   {
-  //     icon: UserOutlined,
-  //     label: "Profile",
-  //     route: "/dashboard/profile",
-  //   },
-  //   {
-  //     icon: SyncOutlined,
-  //     label: "Explore",
-  //     route: "/dashboard/explore",
-  //   },
-  //   {
-  //     icon: NotificationOutlined,
-  //     label: "Broadcast",
-  //     route: "/dashboard/create",
-  //   },
-  // ].map((link, index) => {
-  //   const key = String(index + 1);
-  //   return {
-  //     key: key,
-  //     icon: React.createElement(link.icon),
-  //     label: link.label,
-  //     path: link.route,
-  //   };
-  // });
+  // const [notifications, setNotifications] = useState();
+  // const chainId = 42;
+  // const userAddress = "0xca7632327567796e51920f6b16373e92c7823854";
+  // // const userCAIP = `eip155:${localChainId}:${address}`;
+  // const userCAIP = `eip155:${chainId}:${userAddress}`;
 
   return (
     <Layout>
-      {/* <Header>Header</Header> */}
       <Layout>
         <Sider width={200} className="site-layout-background">
           <Menu
