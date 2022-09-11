@@ -59,12 +59,11 @@ export default function Account({
   const { currentTheme } = useThemeSwitcher();
   const [epnsSocket, setEpnsSocket] = useState();
   const [isConnected, setIsConnected] = useState();
-  const [feedList, setFeedList] = useState();
   const [feedCount, setFeedCount] = useState();
 
   const chainId = 42;
 
-  //EPNS Socket
+  //EPNS Socket connectionObj
   useEffect(() => {
     try {
       if (address) {
@@ -77,11 +76,6 @@ export default function Account({
 
         setEpnsSocket(connectionObject);
       }
-
-      // return () => {
-      //   if (epnsSocket) {
-      //     epnsSocket.disconnect();
-      //   }
     } catch (e) {
       console.log(e);
     }
@@ -102,35 +96,56 @@ export default function Account({
        */
       let count = feedsList.length;
       setFeedCount(count);
-      setFeedList(feedsList);
-      console.log("feedlist", feedsList);
       console.log("feedlist count", feedsList.length);
     });
   };
+
   const removeSocketEvents = () => {
     epnsSocket?.off(EVENTS.CONNECT);
     epnsSocket?.off(EVENTS.DISCONNECT);
+    setFeedCount(0);
   };
 
-  const toggleConnection = () => {
-    if (epnsSocket?.connected) {
-      epnsSocket.disconnect();
-    } else {
-      epnsSocket.connect();
-    }
+  const connectSocket = () => {
+    epnsSocket?.connect();
+    addSocketEvents();
+    setIsConnected(true);
   };
+  const disconnectSocket = () => {
+    epnsSocket?.disconnect();
+    removeSocketEvents();
+    setIsConnected(false);
+  };
+
+  let accountButtonInfo;
+  if (web3Modal?.cachedProvider) {
+    accountButtonInfo = { name: "Logout", action: logoutOfWeb3Modal };
+  } else {
+    accountButtonInfo = { name: "Connect", action: loadWeb3Modal };
+  }
 
   useEffect(() => {
-    if (epnsSocket) {
-      epnsSocket.connect();
-      addSocketEvents();
-      console.log("socket events???", isConnected);
+    if (accountButtonInfo.name === "Logout") {
+      epnsSocket?.connected ? addSocketEvents() : connectSocket();
+    } else {
+      setFeedCount(0);
     }
-    // return () => {
-    //   removeSocketEvents();
-    // };
-    console.log("added socket events", epnsSocket);
   }, [epnsSocket]);
+
+  // EPNS toggleConnection
+  const toggleConnection = () => {
+    if (accountButtonInfo.name === "Logout") {
+      disconnectSocket();
+      console.log("socket disconnected!");
+    } else {
+      if (isConnected) {
+        console.log("epns socket already connected");
+      } else {
+        connectSocket();
+        console.log("socket connected!");
+      }
+    }
+  };
 
   //EPNS sidebar
   useEffect(() => {
@@ -164,13 +179,6 @@ export default function Account({
     };
   }, [address]);
 
-  let accountButtonInfo;
-  if (web3Modal?.cachedProvider) {
-    accountButtonInfo = { name: "Logout", action: logoutOfWeb3Modal };
-  } else {
-    accountButtonInfo = { name: "Connect", action: loadWeb3Modal };
-  }
-
   const display = !minimized && (
     <span>
       {/* {address && (
@@ -202,7 +210,14 @@ export default function Account({
       </Badge>
       {display}
       {web3Modal && (
-        <Button style={{ marginLeft: 8 }} shape="round" onClick={accountButtonInfo.action}>
+        <Button
+          style={{ marginLeft: 8 }}
+          shape="round"
+          onClick={() => {
+            toggleConnection();
+            accountButtonInfo.action();
+          }}
+        >
           {accountButtonInfo.name}
         </Button>
       )}
