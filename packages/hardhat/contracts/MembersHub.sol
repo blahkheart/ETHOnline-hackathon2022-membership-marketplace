@@ -2,27 +2,30 @@
 
 pragma solidity >=0.8.4 <0.9.0;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interface/IPublicLockV10.sol";
 /**
  * @title MembersHub
  * @dev Broadcast memberships via tags
  * @author Danni Thomx
  */
-contract MembersHub {
+contract MembersHub is Ownable {
     string[] public tags;
 
     event NewTag(string indexed tag, address indexed creator);
-    event BroadcastMembership(address indexed membershipAddress, address creator, string[] indexed relatedTags);
-      
+    event BroadcastMembership(address indexed membershipAddress, address creator, string[] relatedTags);
+    event RemoveTag(address creator, string tag);
+    
     struct Membership {
         address membershipAddress;
         address creator;
         string[] relatedTags;
     }
     
-    mapping(address => Membership) public membershipsData;
+    uint256 public maxTagsPerMembershp = 5;
+    mapping(address => Membership) membershipsData;
     mapping(address => bool) allBroadcasts;
-    // IPublicLock public publicLock;
+    mapping(address => mapping(string => bool)) public tagsByUser;
 
 
     // /**
@@ -43,13 +46,32 @@ contract MembersHub {
     //  * @dev add new tag 
     //  * @param string to add
     //  */
-
     function addTag(string memory _newTag) public returns(string[] memory tag) {
         require(keccak256(abi.encodePacked(_newTag)) != keccak256(abi.encodePacked("")), "Invalid tag");
         require(doesTagExist(_newTag) == false, "tag exists" );
         tags.push(_newTag);
+        tagsByUser[msg.sender][_newTag] = true;
         emit NewTag(_newTag, msg.sender);
         return tags;
+    }
+
+    // /**
+    //  * @dev remove tag 
+    //  * @param string to remove
+    //  */
+    function removeTag(string memory _tag) public {
+       uint256 tagToRemoveIndex;
+       require(doesTagExist(_tag) == true, "Nonexistent tag" );
+       require(tagsByUser[msg.sender][_tag] == true, "Not creator");
+       for(uint256 i =0; i < tags.length; i++){
+           if(keccak256(abi.encodePacked(tags[i])) == keccak256(abi.encodePacked(_tag))){
+               tagToRemoveIndex = i;
+               tags[tagToRemoveIndex] = tags[tags.length - 1];
+               tags.pop();
+               tagsByUser[msg.sender][_tag] = false;
+               emit RemoveTag(msg.sender, _tag);
+           }
+       }
     }
 
     // /**
@@ -62,6 +84,12 @@ contract MembersHub {
     // @dev set membershipData
     function _setMembershipData(address _membershipAddr, string[] memory _relatedTags) private {
         membershipsData[_membershipAddr] = Membership(_membershipAddr, msg.sender, _relatedTags);
+    }
+
+    // @notice set max tags per membership
+    function setMaxTagsPerMembership(uint256 _maxTags) public onlyOwner {
+        require(_maxTags > 0, "Less than 1");
+        maxTagsPerMembershp = _maxTags;
     }
 
     function _isLockManager (IPublicLock _publicLock) private view returns(bool) {
@@ -77,7 +105,10 @@ contract MembersHub {
     //  */
     function broadcastMembership(IPublicLock _publicLock, string[] calldata _relatedTags)external {
         string[] memory _tags; 
+        uint256 tagsCount = _relatedTags.length;
         address _membershipAddress = address(_publicLock);
+        //check related tags are not more than max tags per membership
+        require(tagsCount <= maxTagsPerMembershp, "Too many tags");
         // check that related tags is not empty
         require(_relatedTags.length >= 1, "Empty tags");
         // check that caller is a lock manager
@@ -86,7 +117,7 @@ contract MembersHub {
         require(allBroadcasts[_membershipAddress] == false, "Membership exist");
         // check that related tags are in the tags array
         for(uint i = 0; i < _relatedTags.length; i++) {
-            require(doesTagExist(_relatedTags[i]) == true, "Invalid Tag");
+            require(doesTagExist(_relatedTags[i]) == true, "Nonexistent Tag");
             _tags[i] = _relatedTags[i];
         }
         //update membershipsData with provided data
@@ -94,7 +125,6 @@ contract MembersHub {
         // add membership to allBroadcasts
         allBroadcasts[_membershipAddress] = true;
         
-        // emit BroadcastMembership event
         emit BroadcastMembership(_membershipAddress, msg.sender, _tags);
     }
 
