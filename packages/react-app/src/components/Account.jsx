@@ -53,7 +53,6 @@ export default function Account({
   web3Modal,
   loadWeb3Modal,
   logoutOfWeb3Modal,
-  localChainId,
   blockExplorer,
   isContract,
   injectedProvider,

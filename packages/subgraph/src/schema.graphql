@@ -1,31 +1,25 @@
-type Tag @entity {
+type Order @entity {
   id: ID!
-  name: String!
-  creator: TagCreator!
-  memberships: [Membership!]! @derivedFrom(field: "relatedTags")
+  orderId: String!
+  creator: Attendee!
+  vendor: Vendor!
+  amount: BigInt!
   createdAt: BigInt!
+  completed: Boolean!
   transactionHash: String!
 }
 
-type TagCreator @entity {
+type Attendee @entity {
   id: ID!
   address: Bytes!
-  tagsCount: BigInt!
-  tagz: [Tag!] @derivedFrom(field: "creator")
-}
-
-type Membership @entity {
-  id: ID!
-  membershipAddress: Bytes!
-  creator: Broadcaster!
-  relatedTags: [Tag!]!
   createdAt: BigInt!
-  transactionHash: String!
+  ordersCount: BigInt!
+  orders: [Order!] @derivedFrom(field: "creator")
 }
 
-type Broadcaster @entity {
+type Vendor @entity {
   id: ID!
   address: Bytes!
-  memberships: [Membership!] @derivedFrom(field: "creator")
-  membershipsCount: BigInt!
+  ordersCount: BigInt!
+  orders: [Order!] @derivedFrom(field: "vendor")
 }

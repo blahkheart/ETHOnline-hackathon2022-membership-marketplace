@@ -32,14 +32,14 @@ function Subgraph(props) {
 
   const EXAMPLE_GRAPHQL = `
   {
-    tags(first: 25, orderBy: createdAt, orderDirection: desc) {
+    orders(first: 25, orderBy: createdAt, orderDirection: desc) {
       id
       createdAt
       creator {
         address
       }
     }
-    tagCreators {
+    attendees {
       id
       address
     }
@@ -59,7 +59,7 @@ function Subgraph(props) {
       // title: "Purpose",
       // dataIndex: "purpose",
       // key: "purpose",
-      title: "Tag",
+      title: "Order",
       dataIndex: "id",
       key: "id",
     },

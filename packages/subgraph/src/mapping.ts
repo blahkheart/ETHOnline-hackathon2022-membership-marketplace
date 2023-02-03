@@ -1,75 +1,91 @@
 import { BigInt, store } from "@graphprotocol/graph-ts"
 // import { store } from '@graphprotocol/graph-ts'
 import {
-  BroadcastMembership,
-  NewTag,
-  RemoveTag
-} from "../generated/MembersHub/MembersHub"
+  NewOrder,
+  DoneOrder,
+  Register
+} from "../generated/ETHDenverAdmin/ETHDenverAdmin"
 
-import { Tag, TagCreator,Membership,Broadcaster } from "../generated/schema"
+import { Order, Attendee,Vendor } from "../generated/schema"
 
-export function handleNewTag(event: NewTag): void {
+export function handleNewOrder(event: NewOrder): void {
   
-  //  tag creator
-  let tagCreatorId = event.params.creator.toHex()
-  let tagCreator = TagCreator.load(tagCreatorId)
-  if (tagCreator == null) {
-    tagCreator = new TagCreator(tagCreatorId)
-    tagCreator.tagsCount = BigInt.fromI32(1)
+  //  order creator
+  let orderCreatorId = event.params.userId.toHex()
+  let orderCreator = Attendee.load(orderCreatorId)
+  if (orderCreator == null) {
+    orderCreator = new Attendee(orderCreatorId)
+    orderCreator.ordersCount = BigInt.fromI32(1)
   } else {
-    tagCreator.tagsCount = tagCreator.tagsCount.plus(BigInt.fromI32(1))
+    orderCreator.ordersCount = orderCreator.ordersCount.plus(BigInt.fromI32(1))
   }
-  tagCreator.address = event.params.creator
-  tagCreator.save()
+  orderCreator.address = event.params.userId
+  orderCreator.save()
+
+  // order vendor
+  let orderVendorId = event.params.vendorId.toHex()
+  let orderVendor = Vendor.load(orderVendorId)
+  if (orderVendor == null) {
+    orderVendor = new Vendor(orderVendorId)
+    orderVendor.ordersCount = BigInt.fromI32(1)
+  } else {
+    orderVendor.ordersCount = orderVendor.ordersCount.plus(BigInt.fromI32(1))
+  }
+  orderVendor.address = event.params.vendorId
+  orderVendor.save()
   
-  // tags
-  let tagId = event.params.tag
-  let tag = Tag.load(tagId)
-  if (tag == null) {
-    tag = new Tag(tagId)
+  // order
+  let orderId = event.params.id
+  let order = Order.load(orderId)
+  if (order == null) {
+    order = new Order(orderId)
   }
-  tag.name = event.params.tag
-  tag.creator = tagCreatorId
-  tag.createdAt = event.block.timestamp
-  tag.transactionHash = event.transaction.hash.toString()
-  tag.save()
+  order.orderId = event.params.id
+  order.creator = orderCreatorId
+  order.vendor = event.params.vendorId.toHex()
+  order.amount = event.params.amount
+  order.createdAt = event.block.timestamp
+  order.completed = event.params.done
+  order.transactionHash = event.transaction.hash.toString()
+  order.save()
 }
 
-export function handleBroadcastMembership(event: BroadcastMembership): void {
+export function handleRegister(event: Register): void {
   
-  // Broadcaster
-  let broadcasterId = event.params.creator.toHex()
-  let broadcaster = Broadcaster.load(broadcasterId)
-  if (broadcaster == null) {
-    broadcaster = new Broadcaster(broadcasterId)
-    broadcaster.membershipsCount = BigInt.fromI32(1);
-  } else {
-    broadcaster.membershipsCount = broadcaster.membershipsCount.plus(BigInt.fromI32(1))
+  // Register
+  let userId = event.params.userId.toHex()
+  let attendee = Attendee.load(userId)
+  if (attendee == null) {
+    attendee = new Attendee(userId)
+    attendee.ordersCount = BigInt.fromI32(0)
   }
-  broadcaster.address = event.params.creator
-  broadcaster.save()
+  attendee.address = event.params.userId
+  attendee.createdAt = event.block.timestamp
+  attendee.save()
     
   //membership
-  let membership = new Membership(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  );
-  membership.membershipAddress = event.params.membershipAddress;
-  membership.creator = broadcasterId;
-  membership.createdAt = event.block.timestamp;
-  membership.transactionHash = event.transaction.hash.toHex();
-  membership.relatedTags = event.params.relatedTags.map<string>(
-    (item) => item.toString()
-  )
-  membership.save();
+  // let membership = new Membership(
+  //   event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  // );
+  // membership.membershipAddress = event.params.membershipAddress;
+  // membership.creator = userId;
+  // membership.createdAt = event.block.timestamp;
+  // membership.transactionHash = event.transaction.hash.toHex();
+  // membership.relatedorders = event.params.relatedorders.map<string>(
+  //   (item) => item.toString()
+  // )
+  // membership.save();
 }
 
-export function handleRemoveTag(event: RemoveTag): void {
-  // Remove tag
-  let tagId = event.params.tag
-  let tag = Tag.load(tagId)
-  if (tag == null) {
+export function handleDoneOrder(event: DoneOrder): void {
+  // Done order
+  let orderId = event.params.id
+  let order = Order.load(orderId)
+  if (order == null) {
     return
   } else {
-    store.remove("Tag", tagId)
+    order.completed = event.params.done
+    order.createdAt = event.block.timestamp
+    order.save()
   }
 }

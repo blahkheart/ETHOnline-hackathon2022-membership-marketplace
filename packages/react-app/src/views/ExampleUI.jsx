@@ -39,7 +39,6 @@ export default function ExampleUI({
   useEffect(() => {
     if (injectedProvider) {
       setIsLoading(false);
-      // history.push("/");
     }
   }, [injectedProvider]);
 
@@ -127,6 +126,15 @@ export default function ExampleUI({
                 <div style={{ textAlign: "center" }}>
                   <Contract
                     name={name}
+                    chainId={localChainId}
+                    signer={userSigner}
+                    provider={localProvider}
+                    address={address}
+                    blockExplorer={blockExplorer}
+                    contractConfig={contractConfig}
+                  />
+                  <Contract
+                    name={"MyGToken"}
                     chainId={localChainId}
                     signer={userSigner}
                     provider={localProvider}

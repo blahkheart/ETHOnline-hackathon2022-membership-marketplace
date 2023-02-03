@@ -3,29 +3,28 @@ schema:
   file: ./src/schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: MembersHub
-    network: rinkeby
+    name: ETHDenverAdmin
+    network: localhost
     source:
-      address: "{{localhost_MembersHubAddress}}"
-      abi: MembersHub
+      address: "{{localhost_ETHDenverAdminAddress}}"
+      abi: ETHDenverAdmin
       startBlock: 1
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - Tag
-        - Membership
-        - TagCreator
-        - Broadcaster
+        - Order
+        - Attendee
+        - Vendor
       abis:
-        - name: MembersHub
-          file: ./abis/localhost_MembersHub.json
+        - name: ETHDenverAdmin
+          file: ./abis/localhost_ETHDenverAdmin.json
       eventHandlers:
-        - event: NewTag(string,indexed address)
-          handler: handleNewTag
-        - event: BroadcastMembership(indexed address,address,string[])
-          handler: handleBroadcastMembership
-        - event: RemoveTag(address,string)
-          handler: handleRemoveTag
+        - event: NewOrder(string,indexed address, indexed address, indexed uint256, uint256, bool)
+          handler: handleNewOrder
+        - event: Register(indexed address,uint256,bool)
+          handler: handleRegister
+        - event: DoneOrder(string,indexed address, indexed address, indexed uint256, uint256, bool)
+          handler: handleDoneOrder
       file: ./src/mapping.ts

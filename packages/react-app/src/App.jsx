@@ -29,7 +29,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ExampleUI, Hints, Subgraph } from "./views";
+import { Home, ExampleUI } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 // import { apolloClient } from "./helpers/lens/apollo-client";
 // import { gql } from "@apollo/client";
@@ -59,7 +59,7 @@ const { ethers } = require("ethers");
 /// 📡 What chain are your contracts deployed to?
 const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 // const initialNetwork = NETWORKS.polygon; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
-// const initialNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+// const initialNetwork = NETWORKS.goerli; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -270,7 +270,6 @@ function App(props) {
               address={address}
               localProvider={localProvider}
               userSigner={userSigner}
-              localChainId={localChainId}
               mainnetProvider={mainnetProvider}
               price={price}
               web3Modal={web3Modal}
@@ -317,30 +316,10 @@ function App(props) {
             blockExplorer={blockExplorer}
             targetNetwork={targetNetwork}
             injectedProvider={injectedProvider}
-            name={"MembersHub"}
+            name={"ETHDenverAdmin"}
             tx={tx}
           />
-          {/* </ExampleUI> */}
         </Route>
-        {/* <Route exact path="/debug">
-              <Contract
-                name="YourContract"
-                price={price}
-                signer={userSigner}
-                provider={localProvider}
-                address={address}
-                blockExplorer={blockExplorer}
-                contractConfig={contractConfig}
-              />
-            </Route> */}
-        {/* <Route path="/hints">
-              <Hints
-                address={address}
-                yourLocalBalance={yourLocalBalance}
-                mainnetProvider={mainnetProvider}
-                price={price}
-              />
-            </Route> */}
       </Switch>
 
       <ThemeSwitch />
