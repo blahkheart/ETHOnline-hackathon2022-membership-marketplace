@@ -38,6 +38,11 @@ function Subgraph(props) {
       creator {
         address
       }
+      vendor {
+        address
+      }
+      amount
+      completed
     }
     attendees {
       id
@@ -56,24 +61,42 @@ function Subgraph(props) {
   }, [data]);
   const purposeColumns = [
     {
-      // title: "Purpose",
-      // dataIndex: "purpose",
-      // key: "purpose",
-      title: "Order",
+      title: "Order Id",
       dataIndex: "id",
       key: "id",
     },
     {
-      title: "Creator",
+      title: "User Id",
       key: "id",
-      // render: record => <Address value={record.sender.id} ensProvider={props.mainnetProvider} fontSize={16} />,
       render: record => <Address value={record.creator.address} ensProvider={props.mainnetProvider} fontSize={16} />,
     },
     {
-      title: "createdAt",
+      title: "Vendor Id",
+      key: "id",
+      render: record => <Address value={record.vendor.address} ensProvider={props.mainnetProvider} fontSize={16} />,
+    },
+    {
+      title: "Amount",
+      key: "id",
+      render: record => <span>${record.amount}</span>,
+    },
+    {
+      title: "Time",
       key: "createdAt",
       dataIndex: "createdAt",
-      render: d => new Date(d * 1000).toISOString(),
+      render: d =>
+        new Date(d * 1000).toLocaleString("en-us", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+    },
+    {
+      title: "Done",
+      key: "id",
+      render: record => <span>{record.completed ? "True" : "False"}</span>,
     },
   ];
 
@@ -200,7 +223,7 @@ function Subgraph(props) {
         </div>
 
         {data ? (
-          <Table dataSource={data.tags} columns={purposeColumns} rowKey="id" />
+          <Table dataSource={data.orders} columns={purposeColumns} rowKey="id" />
         ) : (
           // <Table dataSource={data.purposes} columns={purposeColumns} rowKey="id" />
           <Typography>{loading ? "Loading..." : deployWarning}</Typography>

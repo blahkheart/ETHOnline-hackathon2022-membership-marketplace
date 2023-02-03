@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
+import { subgraphURI } from "./helpers/graphQueryData";
 
 const themes = {
   dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
@@ -13,12 +14,10 @@ const themes = {
 
 const prevTheme = window.localStorage.getItem("theme");
 
-const subgraphUri = "https://api.thegraph.com/subgraphs/name/blahkheart/members-hub-goerli"; // localhost
 // const subgraphUri = "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract"; // localhost
-// const subgraphUri = "https://api.thegraph.com/subgraphs/name/blahkheart/members-hub-polygon";
 
 const client = new ApolloClient({
-  uri: subgraphUri,
+  uri: subgraphURI,
   cache: new InMemoryCache(),
 });
 
@@ -26,7 +25,7 @@ ReactDOM.render(
   <ApolloProvider client={client}>
     <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "light"}>
       <BrowserRouter>
-        <App subgraphUri={subgraphUri} />
+        <App subgraphUri={subgraphURI} />
       </BrowserRouter>
     </ThemeSwitcherProvider>
   </ApolloProvider>,
