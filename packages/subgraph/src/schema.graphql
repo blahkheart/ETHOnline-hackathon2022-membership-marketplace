@@ -1,15 +1,13 @@
 type Order @entity {
   id: ID!
-  orderId: String!
-  creator: Attendee!
+  creator: Customer!
   vendor: Vendor!
   amount: BigInt!
   createdAt: BigInt!
-  completed: Boolean!
   transactionHash: String!
 }
 
-type Attendee @entity {
+type Customer @entity {
   id: ID!
   address: Bytes!
   createdAt: BigInt!
@@ -21,5 +19,6 @@ type Vendor @entity {
   id: ID!
   address: Bytes!
   ordersCount: BigInt!
+  createdAt: BigInt!
   orders: [Order!] @derivedFrom(field: "vendor")
 }

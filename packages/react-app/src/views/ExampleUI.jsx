@@ -134,7 +134,7 @@ export default function ExampleUI({
                     contractConfig={contractConfig}
                   />
                   <Contract
-                    name={"MyGToken"}
+                    name={"BuidlBuxx"}
                     chainId={localChainId}
                     signer={userSigner}
                     provider={localProvider}

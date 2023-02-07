@@ -17,17 +17,17 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  await deploy("MyGToken", {
+  await deploy("BuidlBuxx", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: ["0xCA7632327567796e51920F6b16373e92c7823854"],
+    // args: ["0xCA7632327567796e51920F6b16373e92c7823854"],
     log: true,
     waitConfirmations: 5,
   });
 
   // Getting a previously deployed contract
-  // const myGToken = await ethers.getContract("MyGToken", deployer);
-  // await myGToken.transferOwnership(
+  // const buidlBuxx = await ethers.getContract("BuidlBuxx", deployer);
+  // await buidlBuxx.transferOwnership(
   //   "0xCA7632327567796e51920F6b16373e92c7823854"
   // );
   /*  await YourContract.setPurpose("Hello");
@@ -79,4 +79,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //   console.error(error);
   // }
 };
-module.exports.tags = ["MyGToken"];
+module.exports.tags = ["BuidlBuxx"];

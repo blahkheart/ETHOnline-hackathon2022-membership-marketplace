@@ -3,10 +3,10 @@ schema:
   file: ./src/schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: ETHDenverAdmin
+    name: BuidlBuxx
     network: localhost
     source:
-      abi: ETHDenverAdmin
+      abi: BuidlBuxx
       address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
     mapping:
       kind: ethereum/events
@@ -14,18 +14,12 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Order
-        - Attendee
+        - Customer
         - Vendor
       abis:
-        - name: ETHDenverAdmin
-          file: ./abis/localhost_ETHDenverAdmin.json
+        - name: BuidlBuxx
+          file: ./abis/localhost_BuidlBuxx.json
       eventHandlers:
-        - event: NewOrder(string,indexed address,indexed address,indexed
-            uint256,uint256,bool)
+        - event: Transfer(indexed address,indexed address,uint256)
           handler: handleNewOrder
-        - event: Register(indexed address,uint256,bool)
-          handler: handleRegister
-        - event: DoneOrder(string,indexed address,indexed address,indexed
-            uint256,uint256,bool)
-          handler: handleDoneOrder
       file: ./src/mapping.ts
