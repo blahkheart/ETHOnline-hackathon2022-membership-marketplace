@@ -5,7 +5,7 @@ import GraphiQL from "graphiql";
 import "graphiql/graphiql.min.css";
 import fetch from "isomorphic-fetch";
 import React, { useState, useEffect } from "react";
-import { Address } from "../components";
+import { Address, OrderId } from "../components";
 import { subgraphURI } from "../helpers/graphQueryData";
 
 const highlight = {
@@ -42,9 +42,8 @@ function Subgraph(props) {
         address
       }
       amount
-      completed
     }
-    attendees {
+    customers {
       id
       address
     }
@@ -62,8 +61,9 @@ function Subgraph(props) {
   const purposeColumns = [
     {
       title: "Order Id",
-      dataIndex: "id",
+      // dataIndex: "id",
       key: "id",
+      render: record => <OrderId value={record.id} ensProvider={props.mainnetProvider} fontSize={16} />,
     },
     {
       title: "User Id",

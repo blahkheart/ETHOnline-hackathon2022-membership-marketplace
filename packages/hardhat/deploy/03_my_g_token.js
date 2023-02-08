@@ -26,10 +26,10 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   });
 
   // Getting a previously deployed contract
-  // const buidlBuxx = await ethers.getContract("BuidlBuxx", deployer);
-  // await buidlBuxx.transferOwnership(
-  //   "0xCA7632327567796e51920F6b16373e92c7823854"
-  // );
+  const buidlBuxx = await ethers.getContract("BuidlBuxx", deployer);
+  await buidlBuxx.transferOwnership(
+    "0xCA7632327567796e51920F6b16373e92c7823854"
+  );
   /*  await YourContract.setPurpose("Hello");
   
     // To take ownership of yourContract using the ownable library uncomment next line and add the 

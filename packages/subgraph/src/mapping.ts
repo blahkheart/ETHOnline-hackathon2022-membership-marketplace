@@ -1,28 +1,45 @@
-import { BigInt, store } from "@graphprotocol/graph-ts"
-// import { store } from '@graphprotocol/graph-ts'
+import { BigInt} from "@graphprotocol/graph-ts"
 import {
-  Transfer
+  Transfer as TransferEvent
 } from "../generated/BuidlBuxx/BuidlBuxx"
 
-import { Order, Customer,Vendor } from "../generated/schema"
+import { Order, Customer, Vendor } from "../generated/schema"
 
-export function handleNewOrder(event: Transfer): void {
-  
-  //  order creator
+// NOTE: Addresses should be in the lowercase format
+const vendors = [
+  "0x2d4bbcc282ea9167d1d24df9b92227f7b2c060a8",
+  "0x0dc01c03207fb73937b4ac88d840fbbb32e8026d",
+]
+
+export function handleNewOrder(event: TransferEvent): void {
+  // check if the transfer is to one of the vendor addresses
+  if (!vendors.includes(event.params.to.toHexString())) {
+    return;
+  }
+
+  let order = new Order(event.transaction.hash.toHex())
+  order.creator = event.params.from.toHexString()
+  order.vendor = event.params.to.toHexString()
+  order.amount = event.params.value
+  order.createdAt = event.block.timestamp
+  order.transactionHash = event.transaction.hash.toHex()
+  order.save()
+
+  //  order creator/ customer
   let customerId = event.params.from.toHex()
   let customer = Customer.load(customerId)
   if (customer == null) {
     customer = new Customer(customerId)
     customer.ordersCount = BigInt.fromI32(1)
     customer.createdAt = event.block.timestamp
-  } else {
-    customer.ordersCount = customer.ordersCount.plus(BigInt.fromI32(1))
-  }
-  customer.address = event.params.from
-  customer.save()
-
+   } else {
+      customer.ordersCount = customer.ordersCount.plus(BigInt.fromI32(1))
+   }
+   customer.address = event.params.from
+   customer.save()
+    
   // order vendor
-  let orderVendorId = event.params.to.toHex()
+  let orderVendorId = event.params.to.toHexString()
   let orderVendor = Vendor.load(orderVendorId)
   if (orderVendor == null) {
     orderVendor = new Vendor(orderVendorId)
@@ -32,51 +49,5 @@ export function handleNewOrder(event: Transfer): void {
     orderVendor.ordersCount = orderVendor.ordersCount.plus(BigInt.fromI32(1))
   }
   orderVendor.address = event.params.to
-  orderVendor.save()
-  
-  // order
-  const vendors = [
-    "0x2d4BBCc282Ea9167D1d24Df9B92227f7B2C060A8",
-    "0x0dc01C03207fB73937B4aC88d840fBBB32e8026d"
-  ]
-
-  for (let i = 0; i < vendors.length; i++) {
-    let order = new Order(event.transaction.hash.toString() + "-" + event.logIndex.toString())
-    if (event.params.to.toHex() === vendors[i]) {
-      // order.orderId = event.params.id
-      order.creator = customerId
-      order.vendor = event.params.to.toHex()
-      order.amount = event.params.value
-      order.createdAt = event.block.timestamp
-      // order.completed = event.params.done
-      order.transactionHash = event.transaction.hash.toString()
-      order.save()
-    }
-  }
+  orderVendor.save() 
 }
-// export function handleRegister(event: Register): void {
-  
-//   // Register
-//   let userId = event.params.userId.toHex()
-//   let attendee = Customer.load(userId)
-//   if (attendee == null) {
-//     attendee = new Customer(userId)
-//     attendee.ordersCount = BigInt.fromI32(0)
-//   }
-//   attendee.address = event.params.userId
-//   attendee.createdAt = event.block.timestamp
-//   attendee.save()
-// }
-
-// export function handleDoneOrder(event: DoneOrder): void {
-//   // Done order
-//   let orderId = event.params.id
-//   let order = Order.load(orderId)
-//   if (order == null) {
-//     return
-//   } else {
-//     order.completed = event.params.done
-//     order.createdAt = event.block.timestamp
-//     order.save()
-//   }
-// }
