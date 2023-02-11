@@ -66,7 +66,7 @@ const broadcasterQuery = `
 
 export const EXAMPLE_GRAPHQL = `
   {
-    orders(first: 25, orderBy: createdAt, orderDirection: desc) {
+    orders(orderBy: createdAt, orderDirection: desc) {
       id
       createdAt
       creator {
