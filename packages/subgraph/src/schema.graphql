@@ -7,6 +7,11 @@ type Order @entity {
   transactionHash: String!
 }
 
+type OrderCounter @entity {
+  id: ID!
+  ordersCount: BigInt!
+}
+
 type Customer @entity {
   id: ID!
   address: Bytes!

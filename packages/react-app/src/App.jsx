@@ -18,11 +18,15 @@ import {
   Faucet,
   GasGauge,
   Header,
+  Balance,
   Ramp,
   ThemeSwitch,
   NetworkDisplay,
   FaucetHint,
   NetworkSwitch,
+  SearchInput,
+  VendorData,
+  Orders,
 } from "./components";
 import { NETWORKS, ALCHEMY_KEY } from "./constants";
 import externalContracts from "./contracts/external_contracts";
@@ -252,7 +256,19 @@ function App(props) {
 
   return (
     <div className="App">
-      <Header>
+      <Header
+        useBurner={USE_BURNER_WALLET}
+        address={address}
+        localProvider={localProvider}
+        userSigner={userSigner}
+        mainnetProvider={mainnetProvider}
+        price={price}
+        web3Modal={web3Modal}
+        loadWeb3Modal={loadWeb3Modal}
+        logoutOfWeb3Modal={logoutOfWeb3Modal}
+        blockExplorer={blockExplorer}
+        injectedProvider={injectedProvider}
+      >
         {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
         <div style={{ position: "relative", display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", flex: 1 }}>
@@ -265,22 +281,13 @@ function App(props) {
                 />
               </div>
             )}
-            <Account
-              useBurner={USE_BURNER_WALLET}
-              address={address}
-              localProvider={localProvider}
-              userSigner={userSigner}
-              mainnetProvider={mainnetProvider}
-              price={price}
-              web3Modal={web3Modal}
-              loadWeb3Modal={loadWeb3Modal}
-              logoutOfWeb3Modal={logoutOfWeb3Modal}
-              blockExplorer={blockExplorer}
-              injectedProvider={injectedProvider}
-            />
           </div>
         </div>
       </Header>
+      {/* <Balance />
+      <SearchInput />
+      <VendorData />
+      <Orders /> */}
       {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
         <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
       )}
@@ -296,6 +303,7 @@ function App(props) {
       <Switch>
         <Route exact path="/">
           <Home
+            mainnetProvider={mainnetProvider}
             address={address}
             web3Modal={web3Modal}
             injectedProvider={injectedProvider}
@@ -303,66 +311,21 @@ function App(props) {
             userSigner={userSigner}
           />
         </Route>
-        <Route path="/dashboard">
-          <ExampleUI
+        <Route exact path="/debug">
+          <Contract
+            name={"BuidlBuxx"}
+            chainId={localChainId}
+            signer={userSigner}
+            provider={localProvider}
             address={address}
-            userSigner={userSigner}
-            mainnetProvider={mainnetProvider}
-            localProvider={localProvider}
-            localChainId={localChainId}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            contractConfig={contractConfig}
             blockExplorer={blockExplorer}
-            targetNetwork={targetNetwork}
-            injectedProvider={injectedProvider}
-            name={"ETHDenverAdmin"}
-            tx={tx}
+            contractConfig={contractConfig}
           />
         </Route>
       </Switch>
 
       <ThemeSwitch />
-
-      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={8}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
-          </Col>
-
-          <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-            <GasGauge gasPrice={gasPrice} />
-          </Col>
-          <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
-            <Button
-              onClick={() => {
-                window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
-              }}
-              size="large"
-              shape="round"
-            >
-              <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                💬
-              </span>
-              Support
-            </Button>
-          </Col>
-        </Row>
-
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={24}>
-            {
-              /*  if the local provider has a signer, let's show the faucet:  */
-              faucetAvailable ? (
-                <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider} />
-              ) : (
-                ""
-              )
-            }
-          </Col>
-        </Row>
-      </div>
+      {/* FOOTER */}
     </div>
   );
 }

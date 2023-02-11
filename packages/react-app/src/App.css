@@ -1,11 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;700&display=swap');
 .App {
   font-family: Montserrat;
-  /* padding-left: calc(100vw - 100%); */
-}
-
-.home {
-  text-align: center;
+  padding: 7px;
 }
 
 #components-layout-demo-top-side-2 .logo {
@@ -44,4 +40,7 @@
 }
 .mh-multiselect {
     width: 100%;
+}
+.orders-table-wrap{
+  min-width: 500px;
 }

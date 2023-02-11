@@ -64,25 +64,29 @@ const broadcasterQuery = `
   }
   `;
 
-// Get challenge query
-// const GET_CHALLENGE = `
-//     query($request: ChallengeRequest!) {
-//         challenge(request: $request) { text }
-//     }
-// `;
+export const EXAMPLE_GRAPHQL = `
+  {
+    orders(first: 25, orderBy: createdAt, orderDirection: desc) {
+      id
+      createdAt
+      creator {
+        address
+      }
+      vendor {
+        address
+      }
+      amount
+    }
+    customers {
+      id
+      address
+    }
+    orderCounters{
+      ordersCount
+    }
+  }
+  `;
 
-// // Generate challenge function
-// export const generateChallenge = async address => {
-//   const res = await apolloClient.query({
-//     query: gql(GET_CHALLENGE),
-//     variables: {
-//       request: {
-//         address,
-//       },
-//     },
-//   });
-//   return res.data.challenge.text;
-// };
 export const gqlTagsQuery = gql`
   {
     tags {
@@ -100,17 +104,6 @@ export const gqlTagsQuery = gql`
   }
 `;
 
-const varQuery = `
-query($first: Int, $orderBy: BigInt, $orderDirection: String) {
-    memberships(where: {relatedTags_contains: ["NFT"]}, orderBy: createdAt, orderDirection: desc) {
-      id
-      createdAt
-      creator {
-        address
-      }
-    }
-  }`;
-
 export const testVarQuery = gql`
   query ($where: String) {
     memberships(where: { relatedTags_contains: [$where] }) {
@@ -126,30 +119,3 @@ export const testVarQuery = gql`
     }
   }
 `;
-
-// memberships(
-// skip: Int = 0
-// first: Int = 100
-// orderBy: Membership_orderBy
-// orderDirection: OrderDirection
-// where: Membership_filter
-// block: Block_height
-// subgraphError: _SubgraphErrorPolicy_! = deny
-// ): [Membership!]!
-
-// const testVarQueryx = gql`
-//   query ($where: String) {
-//    {
-//     memberships(where: { relatedTags_contains: [$where] }) {
-//       id
-//       membershipAddress
-//       relatedTags {
-//         id
-//         name
-//       }
-//       creator {
-//         address
-//       }
-//     }
-//   }
-// `;

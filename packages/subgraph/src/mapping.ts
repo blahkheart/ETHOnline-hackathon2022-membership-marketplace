@@ -3,7 +3,7 @@ import {
   Transfer as TransferEvent
 } from "../generated/BuidlBuxx/BuidlBuxx"
 
-import { Order, Customer, Vendor } from "../generated/schema"
+import { Order, OrderCounter, Customer, Vendor } from "../generated/schema"
 
 // NOTE: Addresses should be in the lowercase format
 const vendors = [
@@ -36,7 +36,16 @@ export function handleNewOrder(event: TransferEvent): void {
       customer.ordersCount = customer.ordersCount.plus(BigInt.fromI32(1))
    }
    customer.address = event.params.from
-   customer.save()
+  customer.save()
+  
+  // Order counter total
+  let orderCounter = OrderCounter.load("newOrder");
+  if (orderCounter == null) {
+    orderCounter = new OrderCounter("newOrder");
+    orderCounter.ordersCount = BigInt.fromI32(0);
+  }
+  orderCounter.ordersCount = orderCounter.ordersCount.plus(BigInt.fromI32(1))
+  orderCounter.save();
     
   // order vendor
   let orderVendorId = event.params.to.toHexString()
