@@ -4,27 +4,13 @@ import { Table, Tooltip, Button, Spin } from "antd";
 import { RedoOutlined } from "@ant-design/icons";
 import { gql, useQuery } from "@apollo/client";
 import { EXAMPLE_GRAPHQL } from "../../helpers/graphQueryData";
+import { formatNumberToCurrency } from "../../helpers/helperFunctions";
+import moment from "moment";
 
 const Orders = ({ mainnetProvider }) => {
+  const [isLoading, setIsLoading] = useState();
   const EXAMPLE_GQL = gql(EXAMPLE_GRAPHQL);
   const { loading, data, refetch } = useQuery(EXAMPLE_GQL, { pollInterval: 2500 });
-
-  useEffect(() => {
-    const test = async () => {
-      console.log("testVendor.jsx::", data);
-    };
-    test();
-  }, [data]);
-
-  let formatting_options = {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  };
-  const formatNumberToCurrency = number => {
-    const dollarStr = new Intl.NumberFormat("en-US", formatting_options);
-    return dollarStr.format(number);
-  };
 
   const purposeColumns = [
     {
@@ -52,14 +38,7 @@ const Orders = ({ mainnetProvider }) => {
       title: "Time",
       key: "createdAt",
       dataIndex: "createdAt",
-      render: d =>
-        new Date(d * 1000).toLocaleString("en-us", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+      render: record => moment.unix(record).fromNow(),
     },
     // {
     //   title: "Done",
@@ -69,7 +48,11 @@ const Orders = ({ mainnetProvider }) => {
   ];
 
   const handleRefresh = () => {
+    setIsLoading(true);
     refetch();
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
     console.log("refetching...");
   };
 
@@ -85,7 +68,7 @@ const Orders = ({ mainnetProvider }) => {
           </div>
         </div>
         <div className="table-responsive-lg ">
-          {!loading && data ? (
+          {!loading && data && !isLoading ? (
             <Table className="table" dataSource={data.orders} columns={purposeColumns} rowKey="id" />
           ) : (
             <div className="text-center">

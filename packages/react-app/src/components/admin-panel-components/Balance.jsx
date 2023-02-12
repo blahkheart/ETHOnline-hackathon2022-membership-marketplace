@@ -2,43 +2,12 @@ import React, { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { EXAMPLE_GRAPHQL } from "../../helpers/graphQueryData";
 import { Spin } from "antd";
+import { useTotalAmount } from "../../hooks";
 
 function Balance() {
-  const [orders, setOrders] = useState();
-  const [totalAmount, setTotalAmount] = useState();
   const EXAMPLE_GQL = gql(EXAMPLE_GRAPHQL);
   const { loading, data } = useQuery(EXAMPLE_GQL, { pollInterval: 2500 });
-
-  // useEffect(() => {
-  //   const test = async () => {
-  //     console.log("testBalance.jsx::", data.orders);
-  //   };
-  //   test();
-  // }, [data]);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     const info = data.orders;
-  //     setOrders(info);
-  //   }
-  // }, [data]);
-  // console.log("testBalance",orders)
-  useEffect(() => {
-    const getTotalAmount = _callback => {
-      try {
-        let _totalAmount = 0;
-        const _orders = data.orders;
-        for (let i = 0; i < _orders.length; i++) {
-          let _amount = parseInt(_orders[i].amount);
-          _totalAmount += _amount;
-          _callback(_totalAmount);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    getTotalAmount(setTotalAmount);
-  }, [data]);
+  const totalAmount = useTotalAmount(data && data.orders ? data.orders : []);
 
   return (
     <div className="d-flex align-items-center rounded-bottom-4 bg-primary px-4 py-2">
@@ -54,7 +23,7 @@ function Balance() {
           </div>
         </>
       ) : (
-        <div className="text-center">
+        <div className="d-flex justify-content-center">
           <Spin></Spin>
         </div>
       )}

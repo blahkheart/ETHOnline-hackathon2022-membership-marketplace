@@ -12,4 +12,15 @@ const getTotalAmount = (_data, _callback) => {
   }
 };
 
-export default getTotalAmount;
+let formatting_options = {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+};
+
+const formatNumberToCurrency = number => {
+  const dollarStr = new Intl.NumberFormat("en-US", formatting_options);
+  return dollarStr.format(number);
+};
+
+module.exports = { getTotalAmount, formatNumberToCurrency };
