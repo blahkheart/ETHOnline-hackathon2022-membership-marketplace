@@ -60,7 +60,7 @@ const Orders = ({ mainnetProvider }) => {
     <div className="d-flex flex-column my-2">
       <div className="rounded-3 py-3 px-2 bg-primary ">
         <div className="d-flex justify-content-between px-4">
-          <h1 className="text-left text-black">New Orders</h1>
+          <h1 className="text-left text-black">Order History</h1>
           <div className="align-items-center d-flex">
             <Tooltip title="Refresh">
               <Button onClick={handleRefresh} size="large" ghost shape="circle" icon={<RedoOutlined />} />
