@@ -157,6 +157,10 @@ const VendorData = ({ orderData, searchEntry, mainnetProvider }) => {
             <div className="text-center">
               <Spin />
             </div>
+          ) : data && data.vendor.orders.length === 0 ? (
+            <div>
+              <p className="fs-6 fw-bold">No data... Adjust the date and try again!</p>
+            </div>
           ) : null}
         </div>
       </div>
